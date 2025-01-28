@@ -6,11 +6,11 @@
 #    By: agrimald <agrimald@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/28 18:04:50 by agrimald          #+#    #+#              #
-#    Updated: 2025/01/28 18:21:40 by agrimald         ###   ########.fr        #
+#    Updated: 2025/01/28 18:26:45 by agrimald         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ScalarConverter
+NAME = convert
 CPP = c++
 CPPFLAGS = -Wall -Werror -Wextra -std=c++98
 RM = rm -rf

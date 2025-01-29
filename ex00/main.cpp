@@ -1,8 +1,6 @@
 # include "main.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
-	std::string mensaje = "Hola mundo";
-
-	std::cout << mensaje << std::endl;
+	
 }

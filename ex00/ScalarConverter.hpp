@@ -1,10 +1,15 @@
 # pragma once
 # include <iostream>
+# include <exception>
+# include <string>
 
 class ScalarConverter
 {
 	private:
-		// Aqui van a ir las funciones privadas, ya que no se pueden acceder desde fuera de la clase
+		ScalarConverter();
+		ScalarConverter(ScalarConverter const &obj);
+		ScalarConverter &operator=(ScalarConverter const &rhs);
+		~ScalarConverter();
 	public:
-
+		void convert(std::string const &input);
 };

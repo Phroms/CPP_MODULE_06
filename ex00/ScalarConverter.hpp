@@ -1,7 +1,11 @@
 # pragma once
 # include <iostream>
-# include <exception>
 # include <string>
+# include <cerrno>
+# include <cstdlib>
+# include <iomanip>
+
+# define RED \033[91m 
 
 class ScalarConverter
 {
@@ -11,5 +15,5 @@ class ScalarConverter
 		ScalarConverter &operator=(ScalarConverter const &rhs);
 		~ScalarConverter();
 	public:
-		void convert(std::string const &input);
+		static void convert(std::string const &input);
 };

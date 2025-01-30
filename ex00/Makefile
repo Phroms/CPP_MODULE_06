@@ -6,7 +6,7 @@
 #    By: agrimald <agrimald@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/28 18:04:50 by agrimald          #+#    #+#              #
-#    Updated: 2025/01/28 18:26:45 by agrimald         ###   ########.fr        #
+#    Updated: 2025/01/30 12:47:45 by agrimald         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,9 @@ RED = \033[91m
 YELLOW = \033[93m
 END_COLOR = \033[0m
 
-SRC = main.cpp
+SRC = main.cpp ScalarConverter.cpp
 
-INC = main.hpp
+INC = ScalarConverter.hpp
 
 OBJECTS = $(SRC:.cpp=.o)
 

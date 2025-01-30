@@ -6,7 +6,7 @@
 #    By: agrimald <agrimald@student.42barcelona.co  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/30 14:32:28 by agrimald          #+#    #+#              #
-#    Updated: 2025/01/30 14:42:13 by agrimald         ###   ########.fr        #
+#    Updated: 2025/01/30 16:52:07 by agrimald         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,9 @@ RED = \033[91m
 YELLOW = \033[93m
 END_COLOR = \033[0m
 
-SRC = main.cpp
+SRC = main.cpp Serializer.cpp
 
-INC = main.hpp
+INC = Serializer.hpp
 
 OBJECTS = $(SRC:.cpp=.o)
 
@@ -35,7 +35,7 @@ $(NAME): $(OBJECTS)
 		 @$(CPP) $(CPPFLAGS) -o $@ $^
 
 %.o: %.cpp $(INC) Makefile
-		 @printf "$(YELLOW)\nGenerating objects... %s $(END_COLOR)\r\n" $@
+		 @printf "$(YELLOW)Generating objects... %s $(END_COLOR)\r\n" $@
 		 @$(CPP) $(CPPFLAGS) -c $< -o $@
 
 fclean: clean

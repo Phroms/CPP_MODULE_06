@@ -125,7 +125,7 @@ static void detectTypeAndConvert(std::string const &str, char &charValue, int &i
 
 static void printMessage(std::string const &str, char &charValue, int &intValue, float &floatValue, double &doubleValue)
 {
-	std::cout << std::fixed << std::setprecision(2);
+	std::cout << std::fixed << std::setprecision(1);
 
 	if (isprint(charValue))
 		std::cout << "char: '" << charValue << "'" << std::endl;

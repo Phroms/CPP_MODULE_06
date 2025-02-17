@@ -1,7 +1,13 @@
-# include "ScalarConverter.hpp"
+#include "ScalarConverter.hpp"
+#include <cctype>
+#include <iomanip>
+#include <ios>
+#include <set>
+#include <sstream>
 
-
-ScalarConverter::ScalarConverter() {}
+ScalarConverter::ScalarConverter()
+{
+}
 
 ScalarConverter::ScalarConverter(ScalarConverter const &obj)
 {
@@ -11,153 +17,87 @@ ScalarConverter::ScalarConverter(ScalarConverter const &obj)
 ScalarConverter &ScalarConverter::operator=(ScalarConverter const &rhs)
 {
 	(void)rhs;
-	return *this;
+	return (*this);
 }
 
-ScalarConverter::~ScalarConverter() {}
-
-// Los metodos son estaticos porque no necesitan ser instanciados en la clase para poder usarlos
-static bool isChar(std::string const &str)
+ScalarConverter::~ScalarConverter()
 {
-	if (str.length() == 1 && !isdigit(str[0]))
-			return true;
-		return false;
 }
 
-static bool isInt(std::string const &str)
+// Convierte un numero double a un carácter imprimible
+static void	toChar(double value, std::string &str)
 {
-	char *end;
+	char c = static_cast<char>(value);
 
-	std::strtol(str.c_str(), &end, 10); // Convierte a base 10
-		
-	return (*end == '\0'); // Retorna true si toda la cadena fue convertida
-}
-
-static bool isFloat(std::string const &str)
-{
-	if (str.find('.') != std::string::npos && str[str.length() - 1] == 'f') // std::string::npos == static_cast<std::size_t>(-1)
-			return true;
-		return false;
-}
-
-static bool isDoble(std::string const &str)
-{
-	if (str.find('.') != std::string::npos && str[str.length() - 1] != 'f')
-			return true;
-		return false;
-}
-
-static bool isSpecialString(std::string const &str)
-{
-	if (str == "nan")
-		return true;
-	if (str == "nanf")
-		return true;
-	if (str == "+inf")
-		return true;
-	if (str == "+inff")
-		return true;
-	if (str == "-inf")
-		return true;
-	if (str == "-inff")
-		return true;
-	return false;
-}
-
-static void handleSpecialStrings(std::string const &str, float &floatValue, double &doubleValue)
-{
-	floatValue = std::strtof(str.c_str(), NULL); // c_str() convierte una string(std::string) en un puntero "const char*" 
-	doubleValue = std::strtod(str.c_str(), NULL); // strtof y strtod convierten la cadena a floar o double
-}
-
-static void detectTypeAndConvert(std::string const &str, char &charValue, int &intValue, float &floatValue, double &doubleValue)
-{
-	char *endPointer;
-
-	if (isChar(str))
-	{
-		charValue = str[0];
-		intValue = static_cast<int>(charValue);
-		floatValue = static_cast<float>(charValue);
-		doubleValue = static_cast<double>(charValue);
-	}
-	else if (isSpecialString(str))
-	{
-		handleSpecialStrings(str, floatValue, doubleValue);
-	}
-	else if (isInt(str))
-	{
-		errno = 0; // Variable global que almacena codigo de Error
-		intValue = std::strtol(str.c_str(), &endPointer, 10); // Base 10 para enteros
-		if (errno == ERANGE) // ERRANGE indica desbordamiento o subdesbordamiento en conversiones numericas 
-		{
-			std::cerr << "Error: Integer out of range" << std::endl;
-		}
-		charValue = static_cast<char>(intValue);
-		floatValue = static_cast<float>(intValue);
-		doubleValue = static_cast<double>(intValue);
-	}
-	else if (isFloat(str))
-	{
-		errno = 0;
-		floatValue = std::strtof(str.c_str(), &endPointer);
-		if (errno == ERANGE)
-		{
-			std::cerr << "Error: Float out of range" << std::endl;
-		}
-		intValue = static_cast<int>(floatValue);
-		charValue = static_cast<char>(floatValue);
-		doubleValue = static_cast<float>(floatValue);
-	}
-	else if (isDoble(str))
-	{
-		errno = 0;
-		doubleValue = std::strtod(str.c_str(), &endPointer);
-		if (errno == ERANGE)
-		{
-			std::cerr << "Error: Double out of range" << std::endl;
-		}
-		intValue = static_cast<int>(doubleValue);
-		charValue = static_cast<char>(doubleValue);
-		floatValue = static_cast<float>(doubleValue);
-	}
-}
-
-static void printMessage(std::string const &str, char &charValue, int &intValue, float &floatValue, double &doubleValue)
-{
-	std::cout << std::fixed << std::setprecision(1);
-
-	if (isprint(charValue))
-		std::cout << "char: '" << charValue << "'" << std::endl;
-	if (isChar(str))
-		std::cout << "char: '" << str[0] << "'" << std::endl;
+	if (std::isprint(c))
+		str = "'" + std::string(1, c) + "'"; //Formatea como un caracter entre comillas
 	else
-		std::cout << "char: Non displayable" << std::endl;
-	if (isSpecialString(str))
-		std::cout << "int: impossible" << std::endl;
-	else
-		std::cout << "int: " << intValue << std::endl;
-
-	std::cout << "float: " << floatValue << "f" << std::endl;
-	std::cout << "double: " << doubleValue << std::endl;
+		str = "Non displayable";
 }
 
-void ScalarConverter::convert(const std::string &input)
+// Convierte un numero double a un entero en string
+static void	toInt(double value, std::string &str)
 {
-	char	charValue = 0;
-	int		intValue = 0;
-	float	floatValue = 0;
-	double	doubleValue = 0;
+	std::ostringstream oss;
+	oss << static_cast<int>(value);
+	str = oss.str();
+}
 
-	try
-	{
-		detectTypeAndConvert(input, charValue, intValue, floatValue, doubleValue);
-	}
-	catch(std::exception &e)
-	{
-		std::cout << "char: impossible\nint: impossible\nfloat: impossible\ndouble: impossible" << std::endl;
-		return ;
-	}
+// Convierte un numero double a un float con un decimal seguido de 'f'
+static void	toFloat(double value, std::string &str)
+{
+	std::ostringstream oss;
+	oss << std::fixed << std::setprecision(1) << static_cast<float>(value) << "f";
+	str = oss.str();
+}
 
-	printMessage(input, charValue, intValue, floatValue, doubleValue);
+// Convierte un numero double a una representacion en string con un decimal
+void	toDouble(double value, std::string &str)
+{
+	std::ostringstream oss;
+	oss << std::fixed << std::setprecision(1) << value;
+	str = oss.str();
+}
+
+void ScalarConverter::convert(const std::string &str)
+{
+	std::string char_str("impossible");
+	std::string int_str("impossible");
+	std::string float_str("impossible");
+	std::string double_str("impossible");
+	if (str == "-inff" || str == "+inff" || str == "nanf")
+	{
+		float_str = str;
+		double_str = str.substr(0, str.length() - 1);
+	}
+	else if (str == "-inf" || str == "+inf" || str == "nan")
+	{
+		float_str = str + "f";
+		double_str = str;
+	}
+	else
+	{
+		char *end;
+		double value(std::strtod(str.c_str(), &end));
+		if (*end == 'f' && *(end + 1) == '\0')
+			value = static_cast<float>(value);
+		else if (*end != '\0')
+		{
+			if (str.length() == 1)
+				value = static_cast<double>(str[0]);
+			else
+				value = std::numeric_limits<double>::infinity();
+		}
+		if (std::isinf(value) == 0)
+		{
+			toChar(value, char_str);
+			toInt(value, int_str);
+			toFloat(value, float_str);
+			toDouble(value, double_str);
+		}
+	}
+	std::cout << "char: " << char_str << "\n";
+	std::cout << "int: " << int_str << "\n";
+	std::cout << "float: " << float_str << "\n";
+	std::cout << "double: " << double_str << "\n";
 }
